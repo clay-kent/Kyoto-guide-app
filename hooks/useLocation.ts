@@ -19,8 +19,30 @@ export function useLocation() {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setCurrentLocation(location);
+      // 継続追跡を開始
+      const subscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 5000, // 5秒ごとに更新
+          distanceInterval: 10, // 10m移動ごとに更新
+        },
+        (location) => {
+          setCurrentLocation(location);
+        }
+      );
+
+      // 初回位置を取得してregionを設定
+      let initialLocation = await Location.getCurrentPositionAsync({});
+      setCurrentLocation(initialLocation);
+      setRegion({
+        latitude: initialLocation.coords.latitude,
+        longitude: initialLocation.coords.longitude,
+        latitudeDelta: 0.03,
+        longitudeDelta: 0.03,
+      });
+
+      // クリーンアップ
+      return () => subscription.remove();
     })();
   }, []);
 
