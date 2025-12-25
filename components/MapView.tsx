@@ -1,8 +1,7 @@
 import { Spot } from '@/types/spot';
 import { cssInterop } from 'nativewind';
-import React from 'react';
 import { View } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, UrlTile } from 'react-native-maps';
 import { useAudioPlayback } from '../hooks/useAudioPlayback';
 import { useLocation } from '../hooks/useLocation';
 
@@ -27,12 +26,12 @@ export default function MapViewComponent({ spots, distanceThreshold = 50, google
           provider={googleMap ? "google" : undefined}
           region={region}
         >
-          {/*!googleMap && (
+          {!googleMap && (
             <UrlTile
               urlTemplate={urlTemplate}
               maximumZ={19}
             />
-          )*/}
+          )}
           {spots.map(spot => (
             <Marker
               key={spot.id}
